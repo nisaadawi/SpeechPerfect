@@ -1,0 +1,42 @@
+2025-10-03 03:02:02 UTC
+Windows-11-10.0.26100-SP0
+Ren'Py 8.4.1.25072401
+
+Early init took 91 ms
+Loading error handling took 260 ms
+Loading script took 2194 ms
+Loading save slot metadata took 85 ms
+Loading persistent took 1 ms
+Running init code took 117 ms
+Loading analysis data took 40 ms
+Analyze and compile ATL took 4 ms
+Reloading save slot metadata took 3 ms
+Backing up script files to 'C:\\Users\\user\\AppData\\Roaming/RenPy/backups\\SpeechPerfect':
+Dump and make backups took 84 ms
+Cleaning cache took 0 ms
+Making clean stores took 1 ms
+Initial gc took 80 ms
+DPI scale factor: 1.250000
+nvdrs: Loaded, about to disable thread optimizations.
+nvdrs: b"Couldn't load nvlib." (can be ignored)
+Creating interface object took 4 ms
+Init translation took 0 ms
+Cleaning stores took 1 ms
+Load screen analysis took 10 ms
+Analyze screens took 32 ms
+Save screen analysis took 19 ms
+Save pyanalysis took 6 ms
+Save bytecode took 37 ms
+Running _start took 2 ms
+Interface start took 321 ms
+
+Initializing gl2 renderer:
+primary display bounds: (0, 0, 1920, 1080)
+swap interval: 1 frames
+Windowed mode.
+Vendor: 'ATI Technologies Inc.'
+Renderer: 'AMD Radeon(TM) Graphics'
+Version: '4.6.0 Compatibility Profile Context 22.20.42.02.221103'
+Display Info: <Info({'bitsize': 32, 'bytesize': 4, 'masks': (16711680, 65280, 255, 0), 'shifts': (16, 8, 0, 0), 'losses': (0, 0, 0, 8), 'current_w': 1920, 'current_h': 1080, 'refresh_rate': 60, 'hw': False, 'wm': True, 'video_mem': 268435456, 'blit_hw': False, 'blit_hw_CC': False, 'blit_hw_A': False, 'blit_sw': False, 'blit_sw_CC': False, 'blit_sw_A': False})>
+Screen sizes: virtual=(1920, 1080) physical=(1180, 664) drawable=(1180, 664)
+Maximum texture size: 4096x4096
