@@ -5,6 +5,32 @@
 
 # define e = Character("Eileen")
 
+init python:
+    
+    import threading
+    import time
+    from firebase_fetcher import get_emotion
+    try:
+        import pyrebase
+        renpy.notify("✅ Pyrebase successfully imported in Ren'Py!")
+    except Exception as e:
+        renpy.notify(f"❌ Import failed: {e}")
+
+    def emotion_notifier():
+        """
+        Background thread that checks Firebase every 10 seconds
+        and shows a Ren'Py notification with the current emotion.
+        """
+        while True:
+            emotion = get_emotion()
+            renpy.notify(f"Current emotion: {emotion}")
+            time.sleep(10)
+
+    # Start background emotion monitoring
+    def start_emotion_monitor():
+        t = threading.Thread(target=emotion_notifier, daemon=True)
+        t.start()
+
 # Define guide character
 define a = Character("Alex", color="#4ec9b0")
 
@@ -41,16 +67,62 @@ label splashscreen:
         call screen login_register_menu
     return
 
-
 label start:
     scene bg hall at bg_hall_scaled
+
     if logged_in_user is not None:
         "Welcome [logged_in_user['username']]!"
         "You're now logged in with email: [logged_in_user['email']]"
-        # You can now access dashboard, gameplay, etc.
+
+        $ renpy.notify("Starting webcam emotion recognition...")
+        python:
+            # Start the webcam-based emotion detection script (external)
+            start_emotion_process()
+
+        $ renpy.notify("Connecting to Firebase emotion monitor...")
+
+        python:
+            import threading
+            import time
+            from firebase_fetcher import get_emotion
+
+            def firebase_emotion_notifier():
+                """
+                Runs in the background — fetches current emotion from Firebase
+                every 10 seconds and displays it via renpy.notify().
+                """
+                while True:
+                    emotion = get_emotion()
+                    renpy.notify(f"Current emotion: {emotion}")
+                    time.sleep(10)
+
+            # Start Firebase emotion polling in a background thread
+            t = threading.Thread(target=firebase_emotion_notifier, daemon=True)
+            t.start()
+
+        "Emotion tracking has started! Let's see how you feel."
+
     else:
         "You are not logged in."
+
+    jump main_story
+
+
+label main_story:
+    show alex at alex_big_center
+
+    "Hmm... I can sense your current emotion."
+
+    # You can still respond based on 'current_emotion' if you wish to store it
+    if current_emotion == "Happy":
+        a "You're smiling! That’s the spirit!"
+    elif current_emotion == "Sad":
+        a "Aww, don’t be sad. I’ll cheer you up!"
+    else:
+        a "You seem calm today."
+
     return
+
 
 label register:
     scene bg hall at bg_hall_scaled

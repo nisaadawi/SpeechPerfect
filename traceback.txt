@@ -1,32 +1,30 @@
 ﻿I'm sorry, but an uncaught exception occurred.
 
 While running game code:
-  File "renpy/common/00start.rpy", line 244, in script call
-    call _splashscreen from _call_splashscreen_1
-  File "game/script.rpy", line 20, in script
-    call screen login_register_menu
-ScriptError: could not find label 'register_screen'.
+  File "game/script.rpy", line 8, in script
+    init python:
+  File "game/script.rpy", line 12, in <module>
+    from firebase_fetcher import get_emotion
+ModuleNotFoundError: No module named 'pyrebase'
 
 -- Full Traceback ------------------------------------------------------------
 
-Full traceback:
-  File "C:\Users\USER\Downloads\renpy-8.3.7-sdk\renpy\bootstrap.py", line 359, in bootstrap
-    renpy.main.main()
-  File "C:\Users\USER\Downloads\renpy-8.3.7-sdk\renpy\main.py", line 652, in main
-    run(restart)
-  File "C:\Users\USER\Downloads\renpy-8.3.7-sdk\renpy\main.py", line 148, in run
-    renpy.execution.run_context(True)
-  File "C:\Users\USER\Downloads\renpy-8.3.7-sdk\renpy\execution.py", line 958, in run_context
-    context.run()
-  File "renpy/common/00start.rpy", line 244, in script call
-    call _splashscreen from _call_splashscreen_1
-  File "game/script.rpy", line 20, in script
-    call screen login_register_menu
-  File "C:\Users\USER\Downloads\renpy-8.3.7-sdk\renpy\script.py", line 1103, in lookup
-    raise ScriptError("could not find label '%s'." % str(original))
-ScriptError: could not find label 'register_screen'.
+Traceback (most recent call last):
+  File "game/script.rpy", line 8, in script
+    init python:
+  File "renpy/ast.py", line 1187, in execute
+    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/python.py", line 1260, in py_exec_bytecode
+    exec(bytecode, globals, locals)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "game/script.rpy", line 12, in <module>
+    from firebase_fetcher import get_emotion
+  File "firebase_fetcher.py", line 2, in <module>
+    import pyrebase
+ModuleNotFoundError: No module named 'pyrebase'
 
-Windows-10-10.0.22631 AMD64
-Ren'Py 8.3.7.25031702
+Windows-11-10.0.26100-SP0 AMD64
+Ren'Py 8.4.1.25072401
 SpeechPerfect 1.0
-Sat Jul  5 22:45:22 2025
+Tue Oct  7 23:55:46 2025

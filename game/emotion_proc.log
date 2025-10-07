@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "C:\Users\user\Documents\FYP ND\RenPy_Game\SpeechPerfect\module\emotion_recognition.py", line 1, in <module>
+    import cv2
+ModuleNotFoundError: No module named 'cv2'
+Traceback (most recent call last):
+  File "C:\Users\user\Documents\FYP ND\RenPy_Game\SpeechPerfect\module\emotion_recognition.py", line 1, in <module>
+    import cv2
+ModuleNotFoundError: No module named 'cv2'
+Traceback (most recent call last):
+  File "C:\Users\user\Documents\FYP ND\RenPy_Game\SpeechPerfect\module\emotion_recognition.py", line 2, in <module>
+    import cv2
+ModuleNotFoundError: No module named 'cv2'

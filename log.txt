@@ -1,33 +1,38 @@
-2025-10-06 14:13:04 UTC
+2025-10-07 15:55:46 UTC
 Windows-11-10.0.26100-SP0
 Ren'Py 8.4.1.25072401
 
-Early init took 50 ms
-Loading error handling took 110 ms
-Loading script took 1356 ms
-Loading save slot metadata took 32 ms
-Loading persistent took 1 ms
-Running init code took 193 ms
-Loading analysis data took 13 ms
-Analyze and compile ATL took 1 ms
-Reloading save slot metadata took 2 ms
-Dump and make backups took 43 ms
-Cleaning cache took 0 ms
-Making clean stores took 1 ms
-Initial gc took 58 ms
+Early init took 82 ms
+Loading error handling took 39 ms
+Loading script took 168 ms
+Loading save slot metadata took 34 ms
+Loading persistent took 0 ms
+
+Full traceback:
+  File "game/script.rpy", line 8, in script
+    init python:
+  File "renpy/ast.py", line 1187, in execute
+    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/python.py", line 1260, in py_exec_bytecode
+    exec(bytecode, globals, locals)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "game/script.rpy", line 12, in <module>
+    from firebase_fetcher import get_emotion
+  File "firebase_fetcher.py", line 2, in <module>
+    import pyrebase
+ModuleNotFoundError: No module named 'pyrebase'
+
+While running game code:
+  File "game/script.rpy", line 8, in script
+    init python:
+  File "game/script.rpy", line 12, in <module>
+    from firebase_fetcher import get_emotion
+ModuleNotFoundError: No module named 'pyrebase'
 DPI scale factor: 1.250000
 nvdrs: Loaded, about to disable thread optimizations.
 nvdrs: b"Couldn't load nvlib." (can be ignored)
-Creating interface object took 4 ms
-Init translation took 0 ms
-Cleaning stores took 0 ms
-Load screen analysis took 23 ms
-Analyze screens took 1 ms
-Save screen analysis took 0 ms
-Save pyanalysis took 0 ms
-Save bytecode took 0 ms
-Running _start took 1 ms
-Interface start took 328 ms
+Interface start took 602 ms
 
 Initializing gl2 renderer:
 primary display bounds: (0, 0, 1920, 1080)
@@ -37,5 +42,9 @@ Vendor: 'ATI Technologies Inc.'
 Renderer: 'AMD Radeon(TM) Graphics'
 Version: '4.6.0 Compatibility Profile Context 22.20.42.02.221103'
 Display Info: <Info({'bitsize': 32, 'bytesize': 4, 'masks': (16711680, 65280, 255, 0), 'shifts': (16, 8, 0, 0), 'losses': (0, 0, 0, 8), 'current_w': 1920, 'current_h': 1080, 'refresh_rate': 60, 'hw': False, 'wm': True, 'video_mem': 268435456, 'blit_hw': False, 'blit_hw_CC': False, 'blit_hw_A': False, 'blit_sw': False, 'blit_sw_CC': False, 'blit_sw_A': False})>
-Screen sizes: virtual=(1920, 1080) physical=(915, 515) drawable=(915, 515)
+Screen sizes: virtual=(1920, 1080) physical=(900, 506) drawable=(900, 506)
+Maximum texture size: 4096x4096
+Screen sizes: virtual=(1920, 1080) physical=(1920, 991) drawable=(1920, 991)
+Maximum texture size: 4096x4096
+Screen sizes: virtual=(1920, 1080) physical=(1920, 991) drawable=(1920, 991)
 Maximum texture size: 4096x4096
