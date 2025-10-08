@@ -93,54 +93,42 @@ label start:
         "Welcome [logged_in_user['username']]!"
         "You're now logged in with email: [logged_in_user['email']]"
 
-        $ renpy.notify("Starting webcam emotion recognition...")
         python:
-            # Start the external webcam emotion detection script (if applicable)
-            start_emotion_monitor()
-
-        $ renpy.notify("Connecting to emotion monitor (HTTP backend)...")
-
-        python:
+            import subprocess
+            import os
             import threading
             import time
             import requests
 
-            API_GET_URL = "https://humancc.site/ndhos/renpy_backend/http_get_emotions.php"
+            # 🎥 1️⃣ Start external emotion detection Python script
+            def start_emotion_recognition():
+                # Absolute path to your emotion detection script
+                script_path = os.path.join(renpy.config.basedir, "module", "emotion_recognition_http.py")
+                subprocess.Popen(["python", script_path], shell=True)
+                renpy.notify("🎥 Emotion recognition started in background!")
 
-            current_emotion = "Unknown"
+            start_emotion_recognition()
 
-            def get_emotion():
-                """
-                Fetch latest emotion from the backend PHP API.
-                """
-                global current_emotion
+            # 🌐 2️⃣ Function to fetch latest emotion from your backend
+            def get_emotion_from_http():
                 try:
-                    response = requests.get(API_GET_URL, timeout=5)
-                    data = response.json()
-                    if data.get("status") == "success":
-                        return data["emotion"]
-                    else:
-                        return "No data"
+                    response = requests.get("https://humancc.site/ndhos/renpy_backend/http_get_emotions.php", timeout=5)
+                    if response.status_code == 200:
+                        data = response.json()
+                        if data.get("status") == "success":
+                            return data.get("emotion", "Unknown")
+                    return "No Data"
                 except Exception as e:
-                    print("Error fetching emotion:", e)
-                    return "Error"
+                    return f"Error: {e}"
 
+            # 🔔 3️⃣ Background thread: fetches emotion every 10 seconds
             def http_emotion_notifier():
-                """
-                Runs in the background — fetches current emotion every 10s
-                and displays it via renpy.notify().
-                """
-                global current_emotion
-                last_emotion = None
                 while True:
-                    emotion = get_emotion()
-                    if emotion != last_emotion and emotion not in ["No data", "Error"]:
-                        current_emotion = emotion
-                        renpy.notify(f"🧠 Detected emotion: {emotion}")
-                        last_emotion = emotion
+                    emotion = get_emotion_from_http()
+                    renpy.notify(f"🧠 Current emotion: {emotion}")
                     time.sleep(10)
 
-            # Start HTTP emotion polling in a background thread
+            # Start background polling
             t = threading.Thread(target=http_emotion_notifier, daemon=True)
             t.start()
 
@@ -157,18 +145,14 @@ label main_story:
 
     "Hmm... I can sense your current emotion."
 
-    # Respond dynamically based on latest emotion
     if current_emotion == "Happy":
         a "You're smiling! That’s the spirit!"
     elif current_emotion == "Sad":
         a "Aww, don’t be sad. I’ll cheer you up!"
-    elif current_emotion == "Angry":
-        a "Hey, it’s okay. Take a deep breath."
     else:
         a "You seem calm today."
 
     return
-
 
 label register:
     scene bg hall at bg_hall_scaled
