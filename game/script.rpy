@@ -6,31 +6,47 @@
 # define e = Character("Eileen")
 
 init python:
-    
     import threading
     import time
-    # 🔧 Add the absolute path to your 'module' folder so Ren'Py can import it
-    sys.path.append(os.path.join(renpy.config.basedir, "module"))
- 
-    try:
-        from firebase_fetcher import get_emotion
-        import pyrebase
-        renpy.notify("✅ Firebase module loaded successfully!")
-    except Exception as e:
-        renpy.notify(f"❌ Firebase import error: {e}")
-    
+    import requests
+    import os
+    import sys
+
+    # URL to your PHP endpoint
+    API_GET_URL = "https://humancc.site/ndhos/renpy_backend/http_get_emotions.php"
+
+    def get_emotion():
+        """
+        Fetch the latest emotion from your server.
+        """
+        try:
+            response = requests.get(API_GET_URL, timeout=5)
+            data = response.json()
+            if data.get("status") == "success":
+                return data["emotion"]
+            else:
+                return "No data"
+        except Exception as e:
+            print("Error fetching emotion:", e)
+            return "Error"
+
     def emotion_notifier():
         """
-        Background thread that checks Firebase every 10 seconds
-        and shows a Ren'Py notification with the current emotion.
+        Background thread that checks the server every 10 seconds
+        and shows a Ren'Py notification with the latest emotion.
         """
+        last_emotion = None
         while True:
             emotion = get_emotion()
-            renpy.notify(f"Current emotion: {emotion}")
+            if emotion and emotion != last_emotion:
+                renpy.notify(f"🧠 Detected emotion: {emotion}")
+                last_emotion = emotion
             time.sleep(10)
 
-    # Start background emotion monitoring
     def start_emotion_monitor():
+        """
+        Starts the emotion notifier in the background.
+        """
         t = threading.Thread(target=emotion_notifier, daemon=True)
         t.start()
 
@@ -79,28 +95,53 @@ label start:
 
         $ renpy.notify("Starting webcam emotion recognition...")
         python:
-            # Start the webcam-based emotion detection script (external)
+            # Start the external webcam emotion detection script (if applicable)
             start_emotion_monitor()
 
-        $ renpy.notify("Connecting to Firebase emotion monitor...")
+        $ renpy.notify("Connecting to emotion monitor (HTTP backend)...")
 
         python:
             import threading
             import time
-            from firebase_fetcher import get_emotion
+            import requests
 
-            def firebase_emotion_notifier():
+            API_GET_URL = "https://humancc.site/ndhos/renpy_backend/http_get_emotions.php"
+
+            current_emotion = "Unknown"
+
+            def get_emotion():
                 """
-                Runs in the background — fetches current emotion from Firebase
-                every 10 seconds and displays it via renpy.notify().
+                Fetch latest emotion from the backend PHP API.
                 """
+                global current_emotion
+                try:
+                    response = requests.get(API_GET_URL, timeout=5)
+                    data = response.json()
+                    if data.get("status") == "success":
+                        return data["emotion"]
+                    else:
+                        return "No data"
+                except Exception as e:
+                    print("Error fetching emotion:", e)
+                    return "Error"
+
+            def http_emotion_notifier():
+                """
+                Runs in the background — fetches current emotion every 10s
+                and displays it via renpy.notify().
+                """
+                global current_emotion
+                last_emotion = None
                 while True:
                     emotion = get_emotion()
-                    renpy.notify(f"Current emotion: {emotion}")
+                    if emotion != last_emotion and emotion not in ["No data", "Error"]:
+                        current_emotion = emotion
+                        renpy.notify(f"🧠 Detected emotion: {emotion}")
+                        last_emotion = emotion
                     time.sleep(10)
 
-            # Start Firebase emotion polling in a background thread
-            t = threading.Thread(target=firebase_emotion_notifier, daemon=True)
+            # Start HTTP emotion polling in a background thread
+            t = threading.Thread(target=http_emotion_notifier, daemon=True)
             t.start()
 
         "Emotion tracking has started! Let's see how you feel."
@@ -116,11 +157,13 @@ label main_story:
 
     "Hmm... I can sense your current emotion."
 
-    # You can still respond based on 'current_emotion' if you wish to store it
+    # Respond dynamically based on latest emotion
     if current_emotion == "Happy":
         a "You're smiling! That’s the spirit!"
     elif current_emotion == "Sad":
         a "Aww, don’t be sad. I’ll cheer you up!"
+    elif current_emotion == "Angry":
+        a "Hey, it’s okay. Take a deep breath."
     else:
         a "You seem calm today."
 
