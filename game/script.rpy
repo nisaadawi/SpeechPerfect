@@ -9,13 +9,16 @@ init python:
     
     import threading
     import time
-    from firebase_fetcher import get_emotion
+    # 🔧 Add the absolute path to your 'module' folder so Ren'Py can import it
+    sys.path.append(os.path.join(renpy.config.basedir, "module"))
+ 
     try:
+        from firebase_fetcher import get_emotion
         import pyrebase
-        renpy.notify("✅ Pyrebase successfully imported in Ren'Py!")
+        renpy.notify("✅ Firebase module loaded successfully!")
     except Exception as e:
-        renpy.notify(f"❌ Import failed: {e}")
-
+        renpy.notify(f"❌ Firebase import error: {e}")
+    
     def emotion_notifier():
         """
         Background thread that checks Firebase every 10 seconds
@@ -77,7 +80,7 @@ label start:
         $ renpy.notify("Starting webcam emotion recognition...")
         python:
             # Start the webcam-based emotion detection script (external)
-            start_emotion_process()
+            start_emotion_monitor()
 
         $ renpy.notify("Connecting to Firebase emotion monitor...")
 
