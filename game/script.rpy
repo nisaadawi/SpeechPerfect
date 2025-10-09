@@ -86,13 +86,32 @@ label splashscreen:
         call screen login_register_menu
     return
 
+# ---------------------------------------------------
+# Default variables for selections
+# ---------------------------------------------------
+default player_topic = None
+default player_duration = 0
+default heckler_mode = None
+
+
+# ---------------------------------------------------
+# Main start label
+# ---------------------------------------------------
 label start:
     scene bg hall at bg_hall_scaled
 
     if logged_in_user is not None:
-        "Welcome [logged_in_user['username']]!"
-        "You're now logged in with email: [logged_in_user['email']]"
 
+        # Welcome screen first
+        call welcome_scene
+
+        # Topic & duration selection
+        call screen topic_time_screen
+
+        # Heckler mode selection
+        call screen heckler_mode_screen
+
+        # Emotion recognition starts only AFTER selections
         python:
             import subprocess
             import os
@@ -100,16 +119,13 @@ label start:
             import time
             import requests
 
-            # 🎥 1️⃣ Start external emotion detection Python script
             def start_emotion_recognition():
-                # Absolute path to your emotion detection script
                 script_path = os.path.join(renpy.config.basedir, "module", "emotion_recognition_http.py")
                 subprocess.Popen(["python", script_path], shell=True)
                 renpy.notify("🎥 Emotion recognition started in background!")
 
             start_emotion_recognition()
 
-            # 🌐 2️⃣ Function to fetch latest emotion from your backend
             def get_emotion_from_http():
                 try:
                     response = requests.get("https://humancc.site/ndhos/renpy_backend/http_get_emotions.php", timeout=5)
@@ -121,23 +137,76 @@ label start:
                 except Exception as e:
                     return f"Error: {e}"
 
-            # 🔔 3️⃣ Background thread: fetches emotion every 10 seconds
             def http_emotion_notifier():
                 while True:
                     emotion = get_emotion_from_http()
                     renpy.notify(f"🧠 Current emotion: {emotion}")
                     time.sleep(10)
 
-            # Start background polling
             t = threading.Thread(target=http_emotion_notifier, daemon=True)
             t.start()
 
         "Emotion tracking has started! Let's see how you feel."
+        jump main_story
 
     else:
         "You are not logged in."
+        return
 
-    jump main_story
+label welcome_scene:
+    show alex at alex_big_center
+
+    a "👋 Hello there, [logged_in_user['username']]!"
+    a "I'm Alex, and I'll be guiding you through your speech session today."
+    a "Let's get started!"
+    
+return
+
+# 🎤 Topic & duration screen
+screen topic_time_screen():
+    tag menu
+
+    vbox:
+        align (0.5, 0.5)
+        spacing 20
+
+        text "🎤 Choose Your Topic and Speech Duration" size 30
+
+        frame:
+            vbox:
+                text "Select a Topic:" size 20
+                textbutton "Technology" action SetVariable("player_topic", "Technology")
+                textbutton "Environment" action SetVariable("player_topic", "Environment")
+                textbutton "Education" action SetVariable("player_topic", "Education")
+
+        frame:
+            vbox:
+                text "Select Duration (minutes):" size 20
+                textbutton "1 Minute" action SetVariable("player_duration", 1)
+                textbutton "3 Minutes" action SetVariable("player_duration", 3)
+                textbutton "5 Minutes" action SetVariable("player_duration", 5)
+
+        hbox:
+            spacing 20
+            if player_topic and player_duration:
+                textbutton "Next →" action Return()
+            textbutton "← Back" action Return("back")
+
+# 😈 Heckler mode screen
+screen heckler_mode_screen():
+    tag menu
+
+    vbox:
+        align (0.5, 0.5)
+        spacing 20
+
+        text "😈 Choose Heckler Mode" size 30
+
+        textbutton "Easy" action [SetVariable("heckler_mode", "Easy"), Return()]
+        textbutton "Medium" action [SetVariable("heckler_mode", "Medium"), Return()]
+        textbutton "Hard" action [SetVariable("heckler_mode", "Hard"), Return()]
+
+        textbutton "← Back" action Return("back")
 
 
 label main_story:
