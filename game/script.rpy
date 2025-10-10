@@ -61,6 +61,7 @@ image alex sad = "images/alex_sad.png"
 
 # define background
 image bg hall = "images/hall_bg.jpg"
+image bg game set = "gui/game_set_bg.jpg"
 
 # resize image
 transform alex_big_center:
@@ -164,49 +165,113 @@ return
 
 # 🎤 Topic & duration screen
 screen topic_time_screen():
+    add "bg game set"  # background for this page
     tag menu
 
     vbox:
         align (0.5, 0.5)
-        spacing 20
+        spacing 40
 
-        text "🎤 Choose Your Topic and Speech Duration" size 30
+        text "🎤 Choose Your Topic and Speech Duration" size 20 xalign 0.5
 
-        frame:
-            vbox:
-                text "Select a Topic:" size 20
-                textbutton "Technology" action SetVariable("player_topic", "Technology")
-                textbutton "Environment" action SetVariable("player_topic", "Environment")
-                textbutton "Education" action SetVariable("player_topic", "Education")
+        vbox:
+            spacing 10
+            text "Select a Topic:" size 20 xalign 0.5
 
-        frame:
-            vbox:
-                text "Select Duration (minutes):" size 20
+            # All topic buttons in one horizontal line
+            hbox:
+                spacing 30
+                xalign 0.5
+
+                imagebutton:
+                    idle "gui/buttons_game/tech_idle.png"
+                    hover "gui/buttons_game/tech_hover.png"
+                    selected_idle "gui/buttons_game/tech_hover.png"    # stays highlighted
+                    selected_hover "gui/buttons_game/tech_hover.png"
+                    action SetVariable("player_topic", "Technology")
+                    selected (player_topic == "Technology")
+
+                imagebutton:
+                    idle "gui/buttons_game/envi_idle.png"
+                    hover "gui/buttons_game/envi_hover.png"
+                    selected_idle "gui/buttons_game/envi_hover.png"
+                    selected_hover "gui/buttons_game/envi_hover.png"
+                    action SetVariable("player_topic", "Environment")
+                    selected (player_topic == "Environment")
+
+                imagebutton:
+                    idle "gui/buttons_game/edu_idle.png"
+                    hover "gui/buttons_game/edu_hover.png"
+                    selected_idle "gui/buttons_game/edu_hover.png"
+                    selected_hover "gui/buttons_game/edu_hover.png"
+                    action SetVariable("player_topic", "Education")
+                    selected (player_topic == "Education")
+        vbox:
+            spacing 10
+            text "Select Duration (minutes):" size 20 xalign 0.5
+
+            # All duration buttons in one horizontal line
+            hbox:
+                spacing 30
+                xalign 0.5
                 textbutton "1 Minute" action SetVariable("player_duration", 1)
                 textbutton "3 Minutes" action SetVariable("player_duration", 3)
                 textbutton "5 Minutes" action SetVariable("player_duration", 5)
 
+        # Navigation buttons (Next & Back)
         hbox:
-            spacing 20
+            spacing 40
+            xalign 0.5
             if player_topic and player_duration:
                 textbutton "Next →" action Return()
             textbutton "← Back" action Return("back")
 
+
 # 😈 Heckler mode screen
 screen heckler_mode_screen():
+    add "bg game set"
     tag menu
 
     vbox:
         align (0.5, 0.5)
-        spacing 20
+        spacing 40
 
-        text "😈 Choose Heckler Mode" size 30
+        text "😈 Choose Heckler Mode" size 30 xalign 0.5
 
-        textbutton "Easy" action [SetVariable("heckler_mode", "Easy"), Return()]
-        textbutton "Medium" action [SetVariable("heckler_mode", "Medium"), Return()]
-        textbutton "Hard" action [SetVariable("heckler_mode", "Hard"), Return()]
+        # ✅ All mode buttons in one horizontal line
+        hbox:
+            spacing 40
+            xalign 0.5
 
-        textbutton "← Back" action Return("back")
+            imagebutton:
+                idle "gui/buttons_game/lovely_idle.png"
+                hover "gui/buttons_game/lovely_hover.png"
+                selected_idle "gui/buttons_game/lovely_hover.png"
+                selected_hover "gui/buttons_game/lovely_hover.png"
+                action SetVariable("heckler_mode", "Lovely")
+                selected (heckler_mode == "Lovely")
+                at Transform(zoom=1.3) 
+
+            imagebutton:
+                idle "gui/buttons_game/skeptic_idle.png"
+                hover "gui/buttons_game/skeptic_hover.png"
+                selected_idle "gui/buttons_game/skeptic_hover.png"
+                selected_hover "gui/buttons_game/skeptic_hover.png"
+                action SetVariable("heckler_mode", "Skeptic")
+                selected (heckler_mode == "Skeptic")
+                at Transform(zoom=1.3) 
+
+            imagebutton:
+                idle "gui/buttons_game/beast_idle.png"
+                hover "gui/buttons_game/beast_hover.png"
+                selected_idle "gui/buttons_game/beast_hover.png"
+                selected_hover "gui/buttons_game/beast_hover.png"
+                action SetVariable("heckler_mode", "Beast")
+                selected (heckler_mode == "Beast")
+                at Transform(zoom=1.3) 
+
+        # ✅ Back button below
+        textbutton "← Back" action Return("back") xalign 0.5
 
 
 label main_story:
