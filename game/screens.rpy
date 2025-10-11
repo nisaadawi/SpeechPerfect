@@ -1721,6 +1721,7 @@ style slider_slider:
 
 # define background
 image bg hall = "images/hall_bg.jpg"
+image bg game set = "gui/game_set_bg.jpg"
 
 # resize image
 transform bg_hall_scaled:
@@ -1728,19 +1729,28 @@ transform bg_hall_scaled:
 
 screen login_register_menu():
 
-    add "bg hall" at bg_hall_scaled
+    # --- Play your looping video background ---
+    add Movie(size=(1920, 1080)) xpos 0 ypos 0
+    on "show" action Play("movie", "gui/main_menu.webm", loop=True)
+    on "hide" action Stop("movie")
 
-    frame:
-        xalign 0.5
-        yalign 0.5
-        padding (30, 30)
-        vbox:
-            spacing 20
-            text "Welcome to the Game" size 40
-            textbutton "Register":
-                action [Hide("login_register_menu"), Jump("register")]
-            textbutton "Login":
-                action [Hide("login_register_menu"), Jump("login_screen")]
+    # --- Button container at bottom-left ---
+    hbox:
+        spacing 20
+        xalign 0.0  # align to left
+        yalign 1.0  # align to bottom
+        xoffset 170 # adjust horizontal position
+        yoffset 50 # adjust vertical offset
+
+        imagebutton:
+            idle "gui/buttons_logreg/register_idle.png"
+            hover "gui/buttons_logreg/register_hover.png"
+            action [Hide("login_register_menu"), Jump("register")]
+
+        imagebutton:
+            idle "gui/buttons_logreg/login_idle.png"
+            hover "gui/buttons_logreg/login_hover.png"
+            action [Hide("login_register_menu"), Jump("login_screen")]
 
 screen register_screen():
 
