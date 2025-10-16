@@ -57,10 +57,10 @@ define gui.interface_text_color = '#334155'
 ## Fonts and Font Sizes ########################################################
 
 ## The font used for in-game text.
-define gui.text_font = "font/TruenoLight-E2pg.otf"
+define gui.text_font = "font/trueno/TruenoLight-E2pg.otf"
 
 ## The font used for character names.
-define gui.name_text_font = "font/TruenoBlackOutline-P43P.otf"
+define gui.name_text_font = "font/trueno/TruenoBlackOutline-P43P.otf"
 
 ## The font used for out-of-game text.
 define gui.interface_text_font = "DejaVuSans.ttf"

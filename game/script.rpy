@@ -61,7 +61,7 @@ image alex sad = "images/alex_sad.png"
 
 # define background
 image bg hall = "images/hall_bg.jpg"
-image bg game set = "gui/game_set_bg.jpg"
+image bg game set = Movie(play="gui/game_set_bg.webm", loop=True)
 
 # resize image
 transform alex_big_center:
@@ -87,19 +87,15 @@ label splashscreen:
         call screen login_register_menu
     return
 
-# ---------------------------------------------------
 # Default variables for selections
-# ---------------------------------------------------
 default player_topic = None
 default player_duration = 0
 default heckler_mode = None
 
 
-# ---------------------------------------------------
 # Main start label
-# ---------------------------------------------------
 label start:
-    scene bg hall at bg_hall_scaled
+    scene bg hall with dissolve
 
     if logged_in_user is not None:
 
@@ -121,11 +117,18 @@ label start:
             import requests
 
             def start_emotion_recognition():
-                script_path = os.path.join(renpy.config.basedir, "module", "emotion_recognition_http.py")
+                script_path = os.path.join(renpy.config.basedir, "module", "emotion_recognition_eyetracker.py")
                 subprocess.Popen(["python", script_path], shell=True)
                 renpy.notify("🎥 Emotion recognition started in background!")
 
+            def start_speech_recognition():
+                script_path = os.path.join(renpy.config.basedir, "module", "speech_recognitions.py")
+                subprocess.Popen(["python", script_path], shell=True)
+                renpy.notify("🎤 Speech recognition started in background!")
+
+            # Start both recognition systems
             start_emotion_recognition()
+            start_speech_recognition()
 
             def get_emotion_from_http():
                 try:
@@ -147,7 +150,7 @@ label start:
             t = threading.Thread(target=http_emotion_notifier, daemon=True)
             t.start()
 
-        "Emotion tracking has started! Let's see how you feel."
+        "Both emotion and speech tracking have started! Let's begin your session."
         jump main_story
 
     else:
@@ -155,9 +158,9 @@ label start:
         return
 
 label welcome_scene:
-    show alex at alex_big_center
+    show alex at alex_big_center with dissolve
 
-    a "👋 Hello there, [logged_in_user['username']]!"
+    a "Hello there, [logged_in_user['username']]!"
     a "I'm Alex, and I'll be guiding you through your speech session today."
     a "Let's get started!"
     
@@ -169,18 +172,18 @@ screen topic_time_screen():
     tag menu
 
     vbox:
+        spacing 30
         align (0.5, 0.5)
-        spacing 40
 
-        text "🎤 Choose Your Topic and Speech Duration" size 20 xalign 0.5
+        text "Choose Your Topic and Speech Duration" size 50 xalign 0.5 font "font/wonderbar/Wonderbar-pALD.ttf" color "#FFFFFF"
 
         vbox:
-            spacing 10
-            text "Select a Topic:" size 20 xalign 0.5
+            spacing 20
+            text "Select a Topic:" size 32 xalign 0.5 font "font/wonderbar/Wonderbar-pALD.ttf" color "#FFFFFF"
 
             # All topic buttons in one horizontal line
             hbox:
-                spacing 30
+                spacing 50
                 xalign 0.5
 
                 imagebutton:
@@ -208,15 +211,25 @@ screen topic_time_screen():
                     selected (player_topic == "Education")
         vbox:
             spacing 10
-            text "Select Duration (minutes):" size 20 xalign 0.5
+            text "Select Duration:" size 32 xalign 0.5 font "font/wonderbar/Wonderbar-pALD.ttf" color "#FFFFFF"
 
             # All duration buttons in one horizontal line
             hbox:
-                spacing 30
+                spacing 40
                 xalign 0.5
-                textbutton "1 Minute" action SetVariable("player_duration", 1)
-                textbutton "3 Minutes" action SetVariable("player_duration", 3)
-                textbutton "5 Minutes" action SetVariable("player_duration", 5)
+                
+                imagebutton:
+                    idle "gui/buttons_game/1min_idle.png"
+                    hover "gui/buttons_game/1min_hover.png"
+                    action SetVariable("player_duration", 1)
+                imagebutton:
+                    idle "gui/buttons_game/3min_idle.png"
+                    hover "gui/buttons_game/3min_hover.png"
+                    action SetVariable("player_duration", 3)
+                imagebutton:
+                    idle "gui/buttons_game/5min_idle.png"
+                    hover "gui/buttons_game/5min_hover.png"
+                    action SetVariable("player_duration", 5)
 
         # Navigation buttons (Next & Back)
         hbox:
@@ -224,7 +237,7 @@ screen topic_time_screen():
             xalign 0.5
             if player_topic and player_duration:
                 textbutton "Next →" action Return()
-            textbutton "← Back" action Return("back")
+            textbutton "← Back" action ShowMenu("main_menu")
 
 
 # 😈 Heckler mode screen
@@ -236,7 +249,7 @@ screen heckler_mode_screen():
         align (0.5, 0.5)
         spacing 40
 
-        text "😈 Choose Heckler Mode" size 30 xalign 0.5
+        text "Choose Heckler Mode" size 50 xalign 0.5 font "font/wonderbar/Wonderbar-pALD.ttf" color "#FFFFFF" 
 
         # ✅ All mode buttons in one horizontal line
         hbox:
@@ -270,8 +283,13 @@ screen heckler_mode_screen():
                 selected (heckler_mode == "Beast")
                 at Transform(zoom=1.3) 
 
-        # ✅ Back button below
-        textbutton "← Back" action Return("back") xalign 0.5
+        # ✅ Navigation buttons below
+        hbox:
+            spacing 40
+            xalign 0.5
+            if heckler_mode:
+                textbutton "Next →" action Return()
+            textbutton "← Back" action ShowMenu("topic_time_screen")
 
 
 label main_story:
@@ -340,8 +358,8 @@ label register:
     return
 
 label login_screen:
-    scene bg hall at bg_hall_scaled
-    show alex at alex_big_center
+    scene bg hall with dissolve
+    show alex at alex_big_center with dissolve
 
     $ success = False
 

@@ -312,6 +312,10 @@ style quick_button_text:
 transform small_button:
     zoom 0.8  # 60% of original size
 
+transform dissolve_in:
+    alpha 0.0
+    linear 0.5 alpha 1.0
+
 screen navigation():
 
     frame:
@@ -320,6 +324,7 @@ screen navigation():
         xoffset 110
         yoffset -30
         background None
+        at dissolve_in
 
         vbox:
             spacing 20
