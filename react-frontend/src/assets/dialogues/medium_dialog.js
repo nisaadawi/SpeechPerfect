@@ -1,6 +1,6 @@
 // Medium level dialogs with IDs for randomization
 export const mediumDialogs = [
-  { id: "med_001", text: "That's a strong claim.", image: "idk_3.png" },
+  { id: "med_001", text: "That's a strong claim. ", image: "idk_3.png" },
   { id: "med_002", text: "Is that a fact or just your opinion?", image: "hm.png" },
   { id: "med_003", text: "I'm not convinced yet. Try again.", image: "idk_2.png" },
   { id: "med_004", text: "Hmm… something doesn't add up", image: "idk_3.png" },

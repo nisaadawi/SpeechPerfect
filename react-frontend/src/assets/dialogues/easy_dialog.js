@@ -7,7 +7,7 @@ export const easyDialogs = [
   { id: "easy_005", text: "I bet you practiced that line like… ten times.", image: "oh_2.png" },
   { id: "easy_006", text: "If you stumble, I'll pretend I didn't see anything.", image: "idk_1.png" },
   { id: "easy_007", text: "I like your energy… even if it's wobbly", image: "blink.png" },
-  { id: "easy_008", text: "Heyyy, superstar! Did you rehearse in front of a mirror or your cat?", image: "oh_1.png" },
+  { id: "easy_008", text: "Heyyy, superstar! Did you rehearse in front of a mirror ?", image: "oh_1.png" },
   { id: "easy_009", text: "Okay okay, impress me.", image: "hm.png" },
   { id: "easy_010", text: "You're braver than you look!", image: "strong.png" },
   { id: "easy_011", text: "Don't mind me… I'm just judging softly..", image: "blink.png" },
@@ -19,6 +19,6 @@ export const easyDialogs = [
   { id: "easy_017", text: "Your voice is shaking, or did I hear it wrong ?", image: "no_1.png" },
   { id: "easy_018", text: "You better make this worthy", image: "hm.png" },
   { id: "easy_019", text: "Uh-Oh! Don't stumble !", image: "no_2.png" },
-  { id: "easy_020", text: "If confidence was a game, you're at Level 2. Go for Level 3!", image: "strong.png" },
+  { id: "easy_020", text: "If confidence was a game, you're at Level 2.", image: "strong.png" },
 ];
 

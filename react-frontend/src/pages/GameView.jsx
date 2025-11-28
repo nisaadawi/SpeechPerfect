@@ -17,6 +17,12 @@ import easyStart from "../assets/heckler/easy_sandra/start.png";
 import mediumStart from "../assets/heckler/medium_ally/start.png";
 import hardStart from "../assets/heckler/hard_alex/start.png";
 
+// Import dialogue bubble
+import dialogueBubble from "../assets/dialogue_bubble.png";
+
+// Glob import all heckler images for dynamic loading
+const hecklerImagesGlob = import.meta.glob("../assets/heckler/**/*.png", { eager: true });
+
 // Map settings to background assets with type info
 const settingBackgrounds = {
   study_group: { src: studyGroupVideo, isVideo: true },
@@ -37,7 +43,7 @@ const hecklerStyles = {
     top: "30%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    maxWidth: "100%",
+    maxWidth: "52%",
     maxHeight: "70%",
     objectFit: "contain",
     clipPath: "inset(0 0 1% 0)",
@@ -46,10 +52,10 @@ const hecklerStyles = {
   meeting: {
     // Different settings for each heckler level
     easy: {
-      top: "31.5%",
+      top: "32%",
       left: "65%",
       transform: "translate(-50%, -50%) rotate(2deg)",
-      maxWidth: "80%",
+      maxWidth: "89%",
       maxHeight: "84%",
       objectFit: "contain",
       clipPath: "inset(0 0 13% 0)",
@@ -60,7 +66,7 @@ const hecklerStyles = {
       top: "35%",
       left: "65%",
       transform: "translate(-50%, -50%) rotate(2deg)",
-      maxWidth: "80%",
+      maxWidth: "89%",
       maxHeight: "84%",
       objectFit: "contain",
       clipPath: "inset(0 0 17% 0)",
@@ -71,7 +77,7 @@ const hecklerStyles = {
       top: "36%",
       left: "65%",
       transform: "translate(-50%, -50%) rotate(2deg)",
-      maxWidth: "80%",
+      maxWidth: "89%",
       maxHeight: "84%",
       objectFit: "contain",
       clipPath: "inset(0 0 18% 0)",
@@ -83,11 +89,27 @@ const hecklerStyles = {
     top: "44.5%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    maxWidth: "90%",
-    maxHeight: "93%",
+    maxWidth: "70%",
+    maxHeight: "90%",
     objectFit: "contain",
     clipPath: "inset(0 0 7% 0)",
     WebkitClipPath: "inset(0 0 7% 0)",
+  },
+};
+
+// Map settings to dialog bubble position configurations
+const dialogBubblePositions = {
+  study_group: {
+    top: "3%",
+    left: "58%",
+  },
+  meeting: {
+    top: "2%",
+    left: "73%",
+  },
+  audience: {
+    top: "10%",
+    left: "60%",
   },
 };
 
@@ -103,7 +125,10 @@ function GameView() {
   const [timeRemaining, setTimeRemaining] = React.useState(180); // 3 minutes in seconds
   const [dialogs, setDialogs] = React.useState([]);
   const [currentDialog, setCurrentDialog] = React.useState(null);
+  const [currentHecklerImage, setCurrentHecklerImage] = React.useState(null);
   const [showDialog, setShowDialog] = React.useState(false);
+  const [hecklerAnimation, setHecklerAnimation] = React.useState(null);
+  const [animationKey, setAnimationKey] = React.useState(0); // Key to force re-render and restart animation
   const usedDialogIdsRef = React.useRef(new Set());
   const dialogTimerRef = React.useRef(null);
 
@@ -195,6 +220,31 @@ function GameView() {
     }
   }, [startTimer, timeRemaining]);
 
+  // Function to get heckler image path dynamically
+  const getHecklerImage = React.useCallback((imageName) => {
+    if (!imageName || !selections.heckler) return null;
+    
+    const hecklerFolders = {
+      easy: "easy_sandra",
+      medium: "medium_ally",
+      hard: "hard_alex",
+    };
+    
+    const folder = hecklerFolders[selections.heckler];
+    if (!folder) return null;
+    
+    // Construct the path and look it up in the glob import
+    const imagePath = `../assets/heckler/${folder}/${imageName}`;
+    const imageModule = hecklerImagesGlob[imagePath];
+    
+    if (imageModule) {
+      return imageModule.default || imageModule;
+    }
+    
+    console.warn(`Heckler image not found: ${imagePath}`);
+    return null;
+  }, [selections.heckler]);
+
   // Load dialogs based on heckler level
   React.useEffect(() => {
     if (selections.heckler) {
@@ -223,14 +273,24 @@ function GameView() {
       usedDialogIdsRef.current = new Set([dialogs[0].id]); // Mark first dialog as used
       
       // Show first dialog immediately (opening dialog)
-      setCurrentDialog(dialogs[0].text);
+      setCurrentDialog(dialogs[0]);
+      // Update heckler image based on first dialog
+      const firstHecklerImage = getHecklerImage(dialogs[0].image);
+      if (firstHecklerImage) {
+        // Trigger animation when image changes
+        const animations = ["shock"];
+        const randomAnim = animations[Math.floor(Math.random() * animations.length)];
+        setHecklerAnimation(randomAnim);
+        setAnimationKey(prev => prev + 1);
+        setCurrentHecklerImage(firstHecklerImage);
+      }
       setShowDialog(true);
       
-      // Hide first dialog after 3 seconds
+      // Hide first dialog after 8 seconds
       const hideFirstDialog = setTimeout(() => {
         setShowDialog(false);
         
-        // After first dialog, wait 17 more seconds (total 20 seconds from start)
+        // After first dialog, wait 12 more seconds (total 20 seconds from start)
         // Then start showing random dialogs every 20 seconds
         const startRandomDialogs = setTimeout(() => {
           const showNextRandom = () => {
@@ -258,25 +318,35 @@ function GameView() {
               // Mark this dialog as used
               usedDialogIdsRef.current.add(selectedDialog.id);
               
-              setCurrentDialog(selectedDialog.text);
+              setCurrentDialog(selectedDialog);
+              // Update heckler image based on selected dialog
+              const hecklerImage = getHecklerImage(selectedDialog.image);
+              if (hecklerImage) {
+              // Trigger random animation when image changes
+              const animations = ["shock"];
+              const randomAnim = animations[Math.floor(Math.random() * animations.length)];
+                setHecklerAnimation(randomAnim);
+                setAnimationKey(prev => prev + 1); // Force animation restart
+                setCurrentHecklerImage(hecklerImage);
+              }
               setShowDialog(true);
               
               // Hide dialog after 3 seconds
               const hideTimer = setTimeout(() => {
                 setShowDialog(false);
                 // Schedule next random dialog after 20 seconds total (17 seconds wait + 3 seconds shown)
-                dialogTimerRef.current = setTimeout(showNextRandom, 17000);
-              }, 3000);
+                dialogTimerRef.current = setTimeout(showNextRandom, 12000);
+              }, 8000);
               
               dialogTimerRef.current = hideTimer;
             }
           };
           
           showNextRandom();
-        }, 17000); // 17 seconds after first dialog ends (20 seconds total from start)
+        }, 12000); // 12 seconds after first dialog ends (20 seconds total from start: 8s shown + 12s wait)
         
         dialogTimerRef.current = startRandomDialogs;
-      }, 3000);
+      }, 8000);
       
       return () => {
         clearTimeout(hideFirstDialog);
@@ -310,10 +380,20 @@ function GameView() {
   const backgroundSrc = background?.src;
   const isVideo = background?.isVideo ?? false;
 
-  // Get heckler image source based on heckler level
-  const hecklerImageSrc = selections.heckler
+  // Get heckler image source based on heckler level (start image)
+  const startHecklerImageSrc = selections.heckler
     ? hecklerImages[selections.heckler]
     : null;
+  
+  // Use current dialog's heckler image if available, otherwise use start image
+  const hecklerImageSrc = currentHecklerImage || startHecklerImageSrc;
+  
+  // Initialize heckler image with start image when game starts
+  React.useEffect(() => {
+    if (startHecklerImageSrc && !currentHecklerImage) {
+      setCurrentHecklerImage(startHecklerImageSrc);
+    }
+  }, [startHecklerImageSrc, currentHecklerImage]);
 
   return (
     <div
@@ -385,18 +465,53 @@ function GameView() {
           styleConfig = hecklerStyles.study_group;
         }
 
+        // Get animation style based on current animation type
+        const getAnimationStyle = () => {
+          if (!hecklerAnimation) return {};
+          
+          const animationMap = {
+            shock: "hecklerShock 0.4s ease-out",
+          };
+          
+          return {
+            animation: animationMap[hecklerAnimation] || "",
+          };
+        };
+
+        // Get animation style based on current animation type
+        const animationStyle = getAnimationStyle();
+        
+        // Extract transform and other positioning styles
+        const { transform, top, left, ...imageStyles } = styleConfig;
+
         return (
-          <img
-            src={hecklerImageSrc}
-            alt="Heckler"
+          <div
             style={{
               position: "absolute",
-              ...styleConfig,
+              top: top,
+              left: left,
+              transform: transform,
               zIndex: 2,
               opacity: showHeckler ? 1 : 0,
               transition: "opacity 1s ease-in-out",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
-          />
+          >
+            <img
+              key={animationKey} // Force re-render to restart animation
+              src={hecklerImageSrc}
+              alt="Heckler"
+              style={{
+                ...imageStyles,
+                display: "block",
+                ...animationStyle,
+                filter: "drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5))",
+                WebkitFilter: "drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5))",
+              }}
+            />
+          </div>
         );
       })()}
 
@@ -490,7 +605,9 @@ function GameView() {
             borderRadius: "12px",
             border: "2px solid rgba(85, 249, 145, 0.5)",
             boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)",
-            animation: "fadeIn 0.8s ease-out",
+            animation: timeRemaining <= 10 
+              ? "fadeIn 0.8s ease-out, timerShake 0.5s infinite" 
+              : "fadeIn 0.8s ease-out",
           }}
         >
           <div
@@ -509,40 +626,85 @@ function GameView() {
         </div>
       )}
 
-      {/* Dialog Display */}
-      {showDialog && currentDialog && (
-        <div
-          style={{
-            position: "absolute",
-            bottom: "50px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 8,
-            maxWidth: "80%",
-            backgroundColor: "rgba(11, 11, 22, 0.9)",
-            padding: "20px 30px",
-            borderRadius: "16px",
-            border: "2px solid rgba(85, 249, 145, 0.6)",
-            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.6)",
-            animation: "fadeInUp 0.5s ease-out",
-          }}
-        >
+      {/* Dialog Display with Speech Bubble */}
+      {showDialog && currentDialog && (() => {
+        const bubblePosition = selections.setting && dialogBubblePositions[selections.setting]
+          ? dialogBubblePositions[selections.setting]
+          : dialogBubblePositions.study_group;
+        
+        return (
           <div
             style={{
-              fontSize: "1.4rem",
-              fontWeight: 500,
-              color: "#ffffff",
-              lineHeight: "1.6",
-              textAlign: "center",
-              letterSpacing: "0.02em",
+              position: "absolute",
+              ...bubblePosition,
+              zIndex: 8,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              animation: "bubblePopUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)",
             }}
           >
-            {currentDialog}
+          {/* Speech Bubble Image */}
+          <div
+            style={{
+              position: "relative",
+              width: "330px",
+              height: "200px",
+              backgroundImage: `url(${dialogueBubble})`,
+              backgroundSize: "100% 100%",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {/* Dialog Text */}
+            <div
+              style={{
+                fontSize: "1.6rem",
+                fontWeight: 500,
+                fontFamily: "'Fredoka', sans-serif",
+                color: "#545454",
+                lineHeight: "1.2",
+                textAlign: "center",
+                letterSpacing: "0.01em",
+                wordWrap: "break-word",
+                width: "calc(100% - 110px)",
+                maxHeight: "130px",
+                overflow: "hidden",
+                display: "-webkit-box",
+                WebkitLineClamp: 5,
+                WebkitBoxOrient: "vertical",
+                textOverflow: "ellipsis",
+                margin: "-20px auto 0 auto",
+                justifyContent: "center",
+                WebkitBoxPack: "center",
+              }}
+            >
+              {currentDialog?.text || currentDialog}
+            </div>
           </div>
         </div>
-      )}
+        );
+      })()}
 
       <style>{`
+        @keyframes bubblePopUp {
+          0% {
+            opacity: 0;
+            transform: scale(0.3) translateY(30px);
+          }
+          50% {
+            transform: scale(1.1) translateY(-5px);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+        
         @keyframes fadeInUp {
           from {
             opacity: 0;
@@ -583,6 +745,65 @@ function GameView() {
             transform: scale(1);
           }
         }
+
+        /* Heckler Animation Effects - Applied to image element */
+        @keyframes hecklerShock {
+          0% {
+            transform: scale(1) rotate(0deg);
+          }
+          10% {
+            transform: scale(1.15) rotate(-3deg);
+          }
+          20% {
+            transform: scale(0.95) rotate(3deg);
+          }
+          30% {
+            transform: scale(1.1) rotate(-2deg);
+          }
+          40% {
+            transform: scale(1.05) rotate(2deg);
+          }
+          50% {
+            transform: scale(1.12) rotate(-1deg);
+          }
+          100% {
+            transform: scale(1) rotate(0deg);
+          }
+        }
+
+        @keyframes timerShake {
+          0%, 100% {
+            transform: translateX(0);
+          }
+          10% {
+            transform: translateX(-8px) rotate(-2deg);
+          }
+          20% {
+            transform: translateX(8px) rotate(2deg);
+          }
+          30% {
+            transform: translateX(-6px) rotate(-1deg);
+          }
+          40% {
+            transform: translateX(6px) rotate(1deg);
+          }
+          50% {
+            transform: translateX(-4px) rotate(-0.5deg);
+          }
+          60% {
+            transform: translateX(4px) rotate(0.5deg);
+          }
+          70% {
+            transform: translateX(-3px);
+          }
+          80% {
+            transform: translateX(3px);
+          }
+          90% {
+            transform: translateX(-2px);
+          }
+        }
+
       `}</style>
     </div>
   );
