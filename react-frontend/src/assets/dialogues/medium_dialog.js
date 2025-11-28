@@ -1,0 +1,25 @@
+// Medium level dialogs with IDs for randomization
+export const mediumDialogs = [
+  { id: "med_001", text: "That's a strong claim.", image: "idk_3.png" },
+  { id: "med_002", text: "Is that a fact or just your opinion?", image: "hm.png" },
+  { id: "med_003", text: "I'm not convinced yet. Try again.", image: "idk_2.png" },
+  { id: "med_004", text: "Hmm… something doesn't add up", image: "idk_3.png" },
+  { id: "med_005", text: "You're telling me this is reliable?", image: "shock_1.png" },
+  { id: "med_006", text: "I'm trying to believe you.", image: "idk_1.png" },
+  { id: "med_007", text: "Hold on, are you sure that's accurate?", image: "shock_1.png" },
+  { id: "med_008", text: "Your reasoning feels incomplete", image: "hm.png" },
+  { id: "med_009", text: "Is this practical?", image: "idk_3.png" },
+  { id: "med_010", text: "You sound confident. Does the data agrees ?", image: "hm.png" },
+  { id: "med_011", text: "I'm listening… convince my brain, not my ears", image: "haha.png" },
+  { id: "med_012", text: "Assume I disagree", image: "haha.png" },
+  { id: "med_013", text: "Okay… Continue..", image: "hm.png" },
+  { id: "med_014", text: "Try a stronger delivery", image: "idk_2.png" },
+  { id: "med_015", text: "…", image: "hm.png" },
+  { id: "med_016", text: "So what if someone disagreed ?", image: "idk_3.png" },
+  { id: "med_017", text: "It sounded vague", image: "idk_2.png" },
+  { id: "med_018", text: "Are you confident about this ?", image: "no_1.png" },
+  { id: "med_019", text: "It's true… Maybe..", image: "idk_1.png" },
+  { id: "med_020", text: "Your points sounds contradict", image: "no_2.png" },
+  { id: "med_021", text: "I'm not rejecting it.. I guess..", image: "idk_3.png" },
+];
+

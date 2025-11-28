@@ -1,0 +1,25 @@
+// Hard level dialogs with IDs for randomization
+export const hardDialogs = [
+  { id: "hard_001", text: "If confidence was volume, you're whispering!", image: "ha_2.png" },
+  { id: "hard_002", text: "This is painful to watch!", image: "ew.png" },
+  { id: "hard_003", text: "You're seriously going with THAT point?", image: "angry.png" },
+  { id: "hard_004", text: "SPEAK LOUDER! I CAN'T HEAR YOUR CONFIDENCE!", image: "no_2.png" },
+  { id: "hard_005", text: "You're losing me….", image: "hm.png" },
+  { id: "hard_006", text: "Why should anyone listen? Huh?", image: "smirk.png" },
+  { id: "hard_007", text: "YOU'RE SLOW! PICK UP THE ENERGY!", image: "huh.png" },
+  { id: "hard_008", text: "Convince me before I walk out!", image: "ha_2.png" },
+  { id: "hard_009", text: "Spit it out! Don't freeze!", image: "huh.png" },
+  { id: "hard_010", text: "You look scared. GOOD. FIGHT BACK!", image: "ha.png" },
+  { id: "hard_011", text: "I'm not impressed. TRY AGAIN", image: "smirk.png" },
+  { id: "hard_012", text: "SHOW ME YOU CAN HANDLE PRESSURE!", image: "no_2.png" },
+  { id: "hard_013", text: "I'm extremely confused !", image: "ha_2.png" },
+  { id: "hard_014", text: "THAT WAS A MESS", image: "huh_2.png" },
+  { id: "hard_015", text: "TRY HARDER!", image: "no_2.png" },
+  { id: "hard_016", text: "BORING!", image: "no.png" },
+  { id: "hard_017", text: "GIVE ME SOMETHING REAL!", image: "hm.png" },
+  { id: "hard_018", text: "I've heard better speeches from a toaster!", image: "ha_2.png" },
+  { id: "hard_019", text: "I WANT FIRE! NOT FLUFF!", image: "angry.png" },
+  { id: "hard_020", text: "IS THIS A SPEECH OR A BEDTIME STORY?", image: "huh.png" },
+  { id: "hard_021", text: "I'M FALLING ASLEEP OVER HERE!", image: "smirk.png" },
+];
+
